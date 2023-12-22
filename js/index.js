@@ -321,21 +321,50 @@ function getCurrentTime() {
 }
 
 /// pul yechish uchun funksiya
-const sendMoney = (decrMoney, cardNum) => {
-  if (cardNum) {
-    if (decrMoney) {
-      if (decrMoney > 0) {
-        let paymentObj = {
-          amount: decrMoney * -1,
-          date: getCurrentTime(),
-        };
-        loggedAccount.transfers.push(paymentObj);
+const sendMoney = (decrMoney) => {
+  let overallBalance = calcMoney(loggedAccount);
+  console.log(overallBalance);
+  if (decrMoney > 0) {
+    if (decrMoney <= overallBalance) {
+      let paymentObj = {
+        amount: decrMoney * -1,
+        date: getCurrentTime(),
+      };
+      loggedAccount.transfers.push(paymentObj);
 
-        // Updating new result
-        updateEverything();
-      } else {
-        return;
-      }
+      // Updating new result
+      updateEverything();
+      return true;
+    } else {
+      alert("hisobingizda yetarli mablag' mavjud emas");
+      return false;
+    }
+  } else {
+    return false;
+  }
+};
+
+// pul qabul qilish
+const depositMoney = (Money, cardNum) => {
+  if (loggedAccount.cardInfo.cardNumber === 8600140234565678) {
+    if (cardNum === 8411347213244488) {
+      let payment = {
+        amount: Money / 12370,
+        date: getCurrentTime(),
+      };
+      account2.transfers.push(payment);
+      updateEverything();
+    } else {
+      return;
+    }
+  } else if (loggedAccount.cardInfo.cardNumber === 8411347213244488) {
+    if (cardNum === 8600140234565678) {
+      let payment = {
+        amount: Money * 12370,
+        date: getCurrentTime(),
+      };
+      account1.transfers.push(payment);
+      updateEverything();
     } else {
       return;
     }
@@ -348,40 +377,11 @@ const sendMoney = (decrMoney, cardNum) => {
 withdrawBtn.addEventListener("click", () => {
   let decrMoney = +transferMoney.value;
   let withdrawCardNum = +cardNumberInput.value;
-  console.log(withdrawCardNum);
-  sendMoney(decrMoney, withdrawCardNum);
-  depositMoney(decrMoney, withdrawCardNum);
-  cardNumberInput.value = "";
-  transferMoney.value = "";
-});
-
-const depositMoney = (Money, cardNum) => {
-  if (cardNum) {
-    if (Money) {
-      if (loggedAccount.cardInfo.cardNumber === 8600140234565678) {
-        if (cardNum === 8411347213244488) {
-          let payment = {
-            amount: Money / 12370,
-            date: getCurrentTime(),
-          };
-          account2.transfers.push(payment);
-          updateEverything();
-        } else {
-          return;
-        }
-      } else if (loggedAccount.cardInfo.cardNumber === 8411347213244488) {
-        if (cardNum === 8600140234565678) {
-          let payment = {
-            amount: Money * 12370,
-            date: getCurrentTime(),
-          };
-          account1.transfers.push(payment);
-          updateEverything();
-        } else {
-          return;
-        }
-      } else {
-        return;
+  if (decrMoney) {
+    if (withdrawCardNum) {
+      const withdrawAnswer = sendMoney(decrMoney);
+      if (withdrawAnswer === true) {
+        depositMoney(decrMoney, withdrawCardNum);
       }
     } else {
       return;
@@ -389,7 +389,9 @@ const depositMoney = (Money, cardNum) => {
   } else {
     return;
   }
-};
+  cardNumberInput.value = "";
+  transferMoney.value = "";
+});
 
 function updateEverything() {
   let allMoneyInAcc = calcMoney(loggedAccount);

@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Card Payment</title>
+    <link rel="stylesheet" href="./css/style.css" />
+  </head>
+  <body>
+    <div class="top_content">
+      <div class="top_text_cnt">
+        <h1 id="username">Payments App</h1>
+        <div class="login_cnt">
+          <div class="input_box">
+            <input type="text" placeholder="Login" class="login_input" />
+          </div>
+          <div class="input_box">
+            <input type="password" placeholder="Parol" class="log_pass_input" />
+          </div>
+          <button class="login_btn">Kirish</button>
+        </div>
+        <button class="sign_up_btn hide">Chiqish</button>
+      </div>
+    </div>
+    <div class="container">
+      <div class="main_cnt">
+        <div class="card_cnt">
+          <h1>Mening kartam</h1>
+          <div class="card_box">
+            <h4 class="card_type">Credit Card</h4>
+            <img src="./assets/img/Group 1.svg" />
+            <h1 class="main_sum">*********</h1>
+            <h3 class="card_holer_name">NAME SURNAME</h3>
+            <div class="card_info">
+              <p class="card_num">**** **** **** ****</p>
+              <p class="card_year">**/**</p>
+            </div>
+          </div>
+          <div class="withdraw_cnt">
+            <h1>Pul O'tkazish</h1>
+            <div class="card_num_input">
+              <input type="number" id="card_num" placeholder="Karta raqami" />
+            </div>
+            <div class="card_num_input">
+              <input type="number" id="transfer_sum" placeholder="Summa" />
+            </div>
+            <button class="withdraw_btn">Yuborish</button>
+          </div>
+        </div>
+        <div class="history_cnt">
+          <h1>O’tkazmalar tarixi</h1>
+          <div class="statistic_box">
+            <div class="statistic_card">
+              <h1 class="income">******</h1>
+            </div>
+            <div class="statistic_card">
+              <h1 class="expense">******</h1>
+            </div>
+          </div>
+          <div class="payment_info_cnt"></div>
+        </div>
+      </div>
+    </div>
+    <script src="./js/index.js"></script>
+  </body>
+</html>

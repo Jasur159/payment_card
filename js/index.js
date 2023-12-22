@@ -294,12 +294,15 @@ loginBtn.addEventListener("click", () => {
   signUpBtn.classList.remove("hide");
   loginTextInput.value = "";
   loginPasswordInput.value = "";
+  profileUserName.textContent = `Xush kelibsiz! ${Object.values(
+    account.owner
+  ).join(" ")}!`;
   setProfile(account);
 });
 
 /*    ------------------------ Sign Up Section ----------- */
 signUpBtn.addEventListener("click", () => {
-  profileUserName.textContent = "";
+  profileUserName.textContent = "Payments App";
   mainCardSum.textContent = "*********";
   cardNumber.textContent = "**** **** **** ****";
   cardValidate.textContent = "**/**";

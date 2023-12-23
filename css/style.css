@@ -8,6 +8,7 @@
 }
 body {
   background-color: #fff;
+  overflow-x: hidden;
 }
 
 .container {
@@ -410,13 +411,16 @@ body {
     width: 100%;
   }
   .card_num_input {
-    width: 95%;
+    width: 100%;
   }
   .withdraw_cnt input {
     font-size: 16px;
   }
   .withdraw_btn {
-    width: 95%;
+    width: 100%;
+  }
+  .card_box img + h1 {
+    font-size: 32px;
   }
 }
 @media screen and (max-width: 350px) {
@@ -427,7 +431,6 @@ body {
     height: 220px;
   }
   .card_box img + h1 {
-    font-size: 26px;
     margin-bottom: 10px;
   }
 }

@@ -270,6 +270,9 @@ const setProfile = (acc) => {
   mainCardSum.textContent = formattedMoney;
   paymentHistory(acc);
   calcAllTransferMoney(acc);
+  profileUserName.textContent = `Xush kelibsiz! ${Object.values(
+    account.owner
+  ).join(" ")}!`;
 };
 
 // Username Yaratish
@@ -294,9 +297,6 @@ loginBtn.addEventListener("click", () => {
   signUpBtn.classList.remove("hide");
   loginTextInput.value = "";
   loginPasswordInput.value = "";
-  profileUserName.textContent = `Xush kelibsiz! ${Object.values(
-    account.owner
-  ).join(" ")}!`;
   setProfile(account);
 });
 

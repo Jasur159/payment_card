@@ -427,10 +427,10 @@ body {
   .card_box img {
     margin: 20px 0 10px;
   }
-  .card_box {
-    height: 220px;
-  }
   .card_box img + h1 {
     margin-bottom: 10px;
+  }
+  .card_box {
+    height: 220px;
   }
 }

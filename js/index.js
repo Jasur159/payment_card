@@ -1,5 +1,6 @@
 /////////    Elements     \\\\\\\\\\\\\\\
 let loggedAccount;
+let cardHistory = [];
 ////////////////////// Buttons //////////////////
 
 const loginBtn = document.querySelector(".login_btn");
@@ -270,9 +271,9 @@ const setProfile = (acc) => {
   mainCardSum.textContent = formattedMoney;
   paymentHistory(acc);
   calcAllTransferMoney(acc);
-  profileUserName.textContent = `Xush kelibsiz! ${Object.values(
-    account.owner
-  ).join(" ")}!`;
+  profileUserName.textContent = `Xush kelibsiz! ${Object.values(acc.owner).join(
+    " "
+  )}!`;
 };
 
 // Username Yaratish

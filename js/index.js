@@ -33,7 +33,7 @@ let account1 = {
   password: "1111",
   cardInfo: {
     cardNumber: 8600140234565678,
-    cardType: "HUMO",
+    cardType: "UZCARD",
     cardValidYear: "09/27",
   },
   owner: {
@@ -135,48 +135,46 @@ let accounts = [account1, account2];
 
 // Formatting money
 const formatMoney = (money, acc) => {
-  let formMoney = money.toLocaleString(acc.locale, {
+  return money.toLocaleString(acc.locale, {
     style: "currency",
     currency: acc.currency,
   });
-  return formMoney;
 };
 
 // Kartada qancha kirim va qancha chiqimni hisoblash uchun function
 const calcAllTransferMoney = (acc) => {
-  let allIncome = 0;
-  let allExpense = 0;
-  let historyAllPayments = acc.transfers.map((obj) => {
-    if (obj.amount < 0) {
-      allExpense += obj.amount;
-    } else {
-      allIncome += obj.amount;
-    }
-  });
+  let allIncome = acc.transfers
+    .filter((tr) => tr.amount > 0)
+    .reduce((bal, tr) => bal + tr.amount, 0);
+  let allExpense = acc.transfers
+    .filter((tr) => tr.amount < 0)
+    .reduce((bal, tr) => bal + tr.amount, 0);
   overallEXpense.textContent = formatMoney(allExpense, acc);
   overallIncome.textContent = `+${formatMoney(allIncome, acc)}`;
 };
 
 // To'lov o'tqazilgan sanalarni to'girlash uchun function
-const getTime = (timeZone) => {
-  let UTMDateInput = new Date(timeZone);
-  function addZero(number) {
-    number < 10 ? "0" + number : number;
-    return number;
-  }
+// const getTime = (timeZone) => {
+//   let UTMDateInput = new Date(timeZone);
+//   function addZero(number) {
+//     if (number < 10) {
+//       return "0" + number;
+//     }
+//     return number;
+//   }
 
-  let hour = addZero(UTMDateInput.getUTCHours());
-  let minute = addZero(UTMDateInput.getUTCMinutes());
-  let paymentTime = `${hour}:${minute}`;
-  let day = addZero(UTMDateInput.getUTCDate());
-  let month = addZero(UTMDateInput.getUTCMonth() + 1);
-  let year = addZero(UTMDateInput.getUTCFullYear());
-  let paymentDate = `${day}.${month}.${year}`;
-  return {
-    paymentTime,
-    paymentDate,
-  };
-};
+//   let hour = addZero(UTMDateInput.getUTCHours());
+//   let minute = addZero(UTMDateInput.getUTCMinutes());
+//   let paymentTime = `${hour}:${minute}`;
+//   let day = addZero(UTMDateInput.getUTCDate());
+//   let month = addZero(UTMDateInput.getUTCMonth() + 1);
+//   let year = addZero(UTMDateInput.getUTCFullYear());
+//   let paymentDate = `${day}.${month}.${year}`;
+//   return {
+//     paymentTime,
+//     paymentDate,
+//   };
+// };
 
 // Biz to'lovlarni windowga qo'shish uchun elementlar yaratib olamiz
 /* !!!!   eslatma qachinki siz biror bir element yaratishga funksiya qilsangiz 
@@ -195,8 +193,6 @@ const createHistoryElements = (acc) => {
   let p = document.createElement("p");
   let spanDate = document.createElement("span");
   spanDate.id = "date";
-  let spanTime = document.createElement("span");
-  spanTime.id = "time";
   let h2 = document.createElement("h2");
   h2.className = "sum";
   h4.textContent = Object.values(acc.owner).join(" ");
@@ -208,12 +204,11 @@ const createHistoryElements = (acc) => {
   div.appendChild(h4);
   div.appendChild(p);
   p.appendChild(spanDate);
-  p.appendChild(spanTime);
+  // p.appendChild(spanTime);
   return {
     h2,
     p,
     spanDate,
-    spanTime,
     historyCard,
   };
 };
@@ -223,13 +218,12 @@ const createHistoryElements = (acc) => {
 const paymentHistory = (acc) => {
   // Example !!!
   paymentHistoryComponent.innerHTML = "";
-
+  const formatTime = (date) => new Date(date).toLocaleString(acc.locale);
   acc.transfers.forEach((obj) => {
     let historyFormMoney = formatMoney(obj.amount, acc);
     let historyElement = createHistoryElements(acc);
     // Example !!!
     paymentHistoryComponent.appendChild(historyElement.historyCard);
-    let time = getTime(obj.date);
     if (obj.amount < 0) {
       historyElement.h2.style.color = "#b80d0d";
       historyElement.h2.textContent = historyFormMoney;
@@ -237,8 +231,8 @@ const paymentHistory = (acc) => {
       historyElement.h2.style.color = "#068822";
       historyElement.h2.textContent = `+${historyFormMoney}`;
     }
-    historyElement.spanDate.textContent = time.paymentDate;
-    historyElement.spanTime.textContent = time.paymentTime;
+    historyElement.spanDate.textContent = formatTime(obj.date);
+    // historyElement.spanTime.textContent = time.paymentTime;
   });
 };
 
@@ -316,92 +310,127 @@ signUpBtn.addEventListener("click", () => {
   cardHolderName.textContent = "NAME SURNAME";
 });
 
-/// Pul jo'natilgan vaqtni olish
-function getCurrentTime() {
-  let currentDate = new Date();
-  const nowUTCPlus5 = new Date(currentDate.getTime() + 5 * 60 * 60 * 1000);
-  let isoStringTime = nowUTCPlus5.toISOString();
-  return isoStringTime;
-}
-
-/// pul yechish uchun funksiya
-const sendMoney = (decrMoney) => {
-  let overallBalance = calcMoney(loggedAccount);
-  console.log(overallBalance);
-  if (decrMoney > 0) {
-    if (decrMoney <= overallBalance) {
-      let paymentObj = {
-        amount: decrMoney * -1,
-        date: getCurrentTime(),
-      };
-      loggedAccount.transfers.push(paymentObj);
-
-      // Updating new result
-      updateEverything();
-      return true;
-    } else {
-      alert("hisobingizda yetarli mablag' mavjud emas");
-      return false;
-    }
-  } else {
-    return false;
-  }
-};
-
-// pul qabul qilish
-const depositMoney = (Money, cardNum) => {
-  if (loggedAccount.cardInfo.cardNumber === 8600140234565678) {
-    if (cardNum === 8411347213244488) {
-      let payment = {
-        amount: Money / 12370,
-        date: getCurrentTime(),
-      };
-      account2.transfers.push(payment);
-      updateEverything();
-    } else {
-      return;
-    }
-  } else if (loggedAccount.cardInfo.cardNumber === 8411347213244488) {
-    if (cardNum === 8600140234565678) {
-      let payment = {
-        amount: Money * 12370,
-        date: getCurrentTime(),
-      };
-      account1.transfers.push(payment);
-      updateEverything();
-    } else {
-      return;
-    }
-  } else {
-    return;
-  }
-};
-
-// Pul yechish tugmasi
 withdrawBtn.addEventListener("click", () => {
-  let decrMoney = +transferMoney.value;
-  let withdrawCardNum = +cardNumberInput.value;
-  if (decrMoney) {
-    if (withdrawCardNum) {
-      const withdrawAnswer = sendMoney(decrMoney);
-      if (withdrawAnswer === true) {
-        depositMoney(decrMoney, withdrawCardNum);
-      }
+  const paymentDate = () => {
+    return new Date().toISOString();
+  };
+  const transferAcc = accounts.find(
+    (acc) =>
+      acc.cardInfo.cardNumber === +cardNumberInput.value &&
+      loggedAccount.cardInfo.cardNumber !== +cardNumberInput.value
+  );
+  if (+transferMoney.value <= calcMoney(loggedAccount)) {
+    loggedAccount.transfers.unshift({
+      amount: -Number(transferMoney.value),
+      date: paymentDate(),
+    });
+
+    if (loggedAccount.currency === "USD") {
+      transferAcc.transfers.unshift({
+        amount: +Number(transferMoney.value) * 12400,
+        date: paymentDate(),
+      });
     } else {
-      return;
+      transferAcc.transfers.unshift({
+        amount: +Number(transferMoney.value) / 12400,
+        date: paymentDate(),
+      });
     }
   } else {
-    return;
+    alert("Hisobda Mablag' yetarli emas");
   }
-  cardNumberInput.value = "";
   transferMoney.value = "";
+  cardNumberInput.value = "";
+
+  setProfile(loggedAccount);
 });
 
-function updateEverything() {
-  let allMoneyInAcc = calcMoney(loggedAccount);
-  let formattedMoney = formatMoney(allMoneyInAcc, loggedAccount);
-  mainCardSum.textContent = formattedMoney;
-  // Updating new result in Obj
-  calcAllTransferMoney(loggedAccount);
-  paymentHistory(loggedAccount);
-}
+/// Pul jo'natilgan vaqtni olish
+// function getCurrentTime() {
+//   let currentDate = new Date();
+//   const nowUTCPlus5 = new Date(currentDate.getTime() + 5 * 60 * 60 * 1000);
+//   let isoStringTime = nowUTCPlus5.toISOString();
+//   return isoStringTime;
+// }
+
+/// pul yechish uchun funksiya
+// const sendMoney = (decrMoney) => {
+//   let overallBalance = calcMoney(loggedAccount);
+//   console.log(overallBalance);
+//   if (decrMoney > 0) {
+//     if (decrMoney <= overallBalance) {
+//       let paymentObj = {
+//         amount: decrMoney * -1,
+//         date: getCurrentTime(),
+//       };
+//       loggedAccount.transfers.push(paymentObj);
+
+//       // Updating new result
+//       updateEverything();
+//       return true;
+//     } else {
+//       alert("hisobingizda yetarli mablag' mavjud emas");
+//       return false;
+//     }
+//   } else {
+//     return false;
+//   }
+// };
+
+// pul qabul qilish
+// const depositMoney = (Money, cardNum) => {
+//   if (loggedAccount.cardInfo.cardNumber === 8600140234565678) {
+//     if (cardNum === 8411347213244488) {
+//       let payment = {
+//         amount: Money / 12370,
+//         date: getCurrentTime(),
+//       };
+//       account2.transfers.push(payment);
+//       updateEverything();
+//     } else {
+//       return;
+//     }
+//   } else if (loggedAccount.cardInfo.cardNumber === 8411347213244488) {
+//     if (cardNum === 8600140234565678) {
+//       let payment = {
+//         amount: Money * 12370,
+//         date: getCurrentTime(),
+//       };
+//       account1.transfers.push(payment);
+//       updateEverything();
+//     } else {
+//       return;
+//     }
+//   } else {
+//     return;
+//   }
+// };
+
+// Pul yechish tugmasi
+// withdrawBtn.addEventListener("click", () => {
+//   let decrMoney = +transferMoney.value;
+//   let withdrawCardNum = +cardNumberInput.value;
+//   if (decrMoney) {
+//     if (withdrawCardNum) {
+//       const withdrawAnswer = sendMoney(decrMoney);
+//       if (withdrawAnswer === true) {
+//         depositMoney(decrMoney, withdrawCardNum);
+//       }
+//     } else {
+//       return;
+//     }
+//   } else {
+//     return;
+//   }
+//   cardNumberInput.value = "";
+//   transferMoney.value = "";
+// });
+
+// function updateEverything() {
+//   let allMoneyInAcc = calcMoney(loggedAccount);
+//   let formattedMoney = formatMoney(allMoneyInAcc, loggedAccount);
+//   mainCardSum.textContent = formattedMoney;
+//   // Updating new result in Obj
+//   calcAllTransferMoney(loggedAccount);
+//   paymentHistory(loggedAccount);
+// }

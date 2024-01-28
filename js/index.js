@@ -34,7 +34,7 @@ let account1 = {
   cardInfo: {
     cardNumber: 5440810038736723,
     cardType: "UZCARD",
-    cardValidYear: "09/27",
+    cardValidYear: "10/24",
   },
   owner: {
     firstName: "Togayev",

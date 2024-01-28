@@ -32,13 +32,13 @@ const loginComponents = document.querySelector(".login_cnt");
 let account1 = {
   password: "1111",
   cardInfo: {
-    cardNumber: 8600140234565678,
+    cardNumber: 5440810038736723,
     cardType: "UZCARD",
     cardValidYear: "09/27",
   },
   owner: {
-    firstName: "Jasurbek",
-    lastName: "G'aniyev",
+    firstName: "Togayev",
+    lastName: "Oral",
   },
   transfers: [
     {
